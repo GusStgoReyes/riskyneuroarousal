@@ -103,7 +103,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load a subjects data (TODO: make dynamic src path)
-    behav_data = pd.read_csv("../../data/behavioral_data.csv").query(f"sub == {int(args.subj_ID)}")
+    behav_data = pd.read_csv("/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/data/behavioral_data.csv").query(f"sub == {int(args.subj_ID)}")
 
     # Select a model
     model_ID = int(args.model)

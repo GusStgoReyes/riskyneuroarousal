@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=pyddm
-#SBATCH --time=01:00:00
+#SBATCH --time=02:00:00
 #SBATCH -p russpold
-#SBATCH --array=0-1
+#SBATCH --array=3-54
 
 module load python/3.12.1
 source /scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/.venv/bin/activate
