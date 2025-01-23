@@ -34,8 +34,7 @@ def ddm(data,
         dx = 0.001, 
         dt = 0.001, 
         rt_column_name='RT',
-        choice_column_name='accept',
-        choice_names=('accept', 'reject')):
+        choice_column_name='accept'):
     
     model = pyddm.gddm(starting_position=response_bias_func,
                         drift=drift_func,
@@ -45,8 +44,8 @@ def ddm(data,
                         conditions=conditions,
                         T_dur = T_dur,
                         dx = dx,
-                        dt = dt,)
-                        #choice_names=choice_names)
+                        dt = dt)
+
     
     # Remove any outliers (ddm is sensitive to outliers)
     data = data.query(f"{choice_column_name} != -1 & {rt_column_name} > .2")
@@ -118,9 +117,19 @@ if __name__ == "__main__":
     
     # Run the ddm fit
     ddm_model = ddm(behav_data, response_bias_func, drift_func, nondecision_func, bound_func, params, conditions)
+    
+    # Save the parameters
     params_fit = ddm_model.parameters()
-    params_fit[ddm_model.fitresult.loss] = ddm_model.fitresult.value()
+    params_save = {}
+    for param_category in params_fit:
+        for param_key in params_fit[param_category]:
+            if type(params_fit[param_category][param_key]) == float:
+                params_save[f"{param_category}_{param_key}"] = params_fit[param_category][param_key]
+            else:
+                params_save[f"{param_category}_{param_key}"] = params_fit[param_category][param_key].default()
 
-    # Save the parameters and the model fit value (TODO: make dynamic path for results? Also how to join all results together?)
-    with open(f"{args.results_pth}/sub{args.subj_ID}_model{args.model}.pkl", 'wb') as handle:
-        pkl.dump(params_fit, handle, protocol=pkl.HIGHEST_PROTOCOL)
+    params_save[ddm_model.fitresult.loss] = ddm_model.fitresult.value()
+    params_save['model_ID'] = model_ID
+    params_save['sub'] = int(args.subj_ID)
+
+    pd.DataFrame(params_save).to_csv(f"{args.results_pth}/sub{args.subj_ID}_model{args.model}.csv")
