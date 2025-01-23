@@ -45,8 +45,8 @@ def ddm(data,
                         conditions=conditions,
                         T_dur = T_dur,
                         dx = dx,
-                        dt = dt,
-                        choice_names=choice_names)
+                        dt = dt,)
+                        #choice_names=choice_names)
     
     # Remove any outliers (ddm is sensitive to outliers)
     data = data.query(f"{choice_column_name} != -1 & {rt_column_name} > .2")
@@ -104,7 +104,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     # Load a subjects data (TODO: make dynamic src path)
-    behav_data = pd.read_csv("../../data/behavioral_data.csv").query(f"subj_ID == {int(args.subj_ID)}")
+    behav_data = pd.read_csv("../../data/behavioral_data.csv").query(f"sub == {int(args.subj_ID)}")
 
     # Select a model
     model_ID = int(args.model)
