@@ -31,8 +31,8 @@ def ddm(data,
         parameters, 
         conditions, 
         T_dur = 4, 
-        dx = 0.001, 
-        dt = 0.001, 
+        dx = 0.002, 
+        dt = 0.002, 
         rt_column_name='RT',
         choice_column_name='accept'):
     
@@ -74,11 +74,11 @@ def drift_function(model_ID):
 def parameters(model_ID):
     if model_ID == 1:
         return {"IC" : (-1, 1),
-                "ndtime" : (0.25, 1.5),
-                "alpha" : (-0.5, 0.5),
-                "drift_gain" : (0, 0.5),
-                "drift_loss" : (0, 0.5),
-                "B" : (0.5, 1.5),}
+                "ndtime" : (0.1, 1.5),
+                "alpha" : (-1, 1),
+                "drift_gain" : (-0.1, 0.75),
+                "drift_loss" : (-0.1, 0.75),
+                "B" : (0.5, 1.75),}
     elif model_ID == 2:
         return {"IC" : (-1, 1),
                 "ndtime" : (0.25, 1.5),
@@ -120,10 +120,14 @@ if __name__ == "__main__":
     
     # Save the parameters
     params_fit = ddm_model.parameters()
+    with open(f"{args.results_pth}/sub{args.subj_ID}_model{args.model}.pkl", 'wb') as file:
+        # Dump the dictionary into the file
+        pkl.dump(params_fit, file)
+
     params_save = {}
     for param_category in params_fit:
         for param_key in params_fit[param_category]:
-            if type(params_fit[param_category][param_key]) == float:
+            if type(params_fit[param_category][param_key]) == float or type(params_fit[param_category][param_key]) == int:
                 params_save[f"{param_category}_{param_key}"] = params_fit[param_category][param_key]
             else:
                 params_save[f"{param_category}_{param_key}"] = params_fit[param_category][param_key].default()
