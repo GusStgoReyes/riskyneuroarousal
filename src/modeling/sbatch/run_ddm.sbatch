@@ -11,4 +11,4 @@ source /scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/.venv/bin/activate
 SUBJ_ID=$(awk -v task_id=$SLURM_ARRAY_TASK_ID 'NR == task_id + 1 {print $1}' /scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/src/subjects.csv)
 
 # Run the Python script with the extracted subject ID
-python /scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/src/modeling/ddm_model.py --subj_ID "$SUBJ_ID" --model "1" --results_pth "/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/results"
+python /scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/src/modeling/pyddm_model.py --subj_ID "$SUBJ_ID" --model "1" --results_pth "/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/results"
