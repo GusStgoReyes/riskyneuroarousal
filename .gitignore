@@ -1,6 +1,7 @@
 .venv
 data/*.csv 
 !data/behavioral_data.csv
+!data/behavioral_data_non_pupil.csv
 .DS_Store
 src/modeling/sbatch/slurm*
 results/models
