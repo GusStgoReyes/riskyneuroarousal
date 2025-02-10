@@ -1,0 +1,16 @@
+Metadata-Version: 2.2
+Name: riskyneuroarousal
+Version: 0.1.0
+Summary: Add your description here
+Requires-Python: >=3.12
+Description-Content-Type: text/markdown
+Requires-Dist: jupyter>=1.1.1
+Requires-Dist: matplotlib>=3.10.0
+Requires-Dist: numpy>=2.2.0
+Requires-Dist: pandas>=2.2.3
+Requires-Dist: pyddm>=0.8.1
+Requires-Dist: rpy2>=3.5.17
+Requires-Dist: seaborn>=0.13.2
+Requires-Dist: statsmodels>=0.14.4
+
+# riskyneuroarousal
