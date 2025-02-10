@@ -1,7 +1,7 @@
 import hddm
 
 def load_data(subj_ID):
-    data = hddm.load_csv("/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/data/behavioral_data_non_pupil.csv").query(f"sub == {subj_ID}")
+    data = hddm.load_csv("/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/data/behavioral_data.csv").query(f"sub == {subj_ID}")
     data = data.rename(columns={"RT" : "rt", "accept" : "response", "sub" : "subj_idx"})
     data = data.query("rt > 0.2")
     data = hddm.utils.flip_errors(data)
