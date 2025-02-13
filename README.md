@@ -18,6 +18,8 @@ To install the necessary dependencies, run:
 sh setup_env.sh
 ```
 
+Furthermore, add the path of the data folder to `config.json` and add your username. 
+
 ## Repository Structure
 - /data:
     - Contains the behavioral data and an example eye tracking data

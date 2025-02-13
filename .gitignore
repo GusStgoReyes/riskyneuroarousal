@@ -2,6 +2,8 @@
 data/*.csv 
 !data/behavioral_data.csv
 !data/behavioral_data_non_pupil.csv
+!data/pupil_data.csv
+!d
 .DS_Store
 src/modeling/sbatch/slurm*
 results/ddm_models/parameters
