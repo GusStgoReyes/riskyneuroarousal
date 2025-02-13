@@ -4,6 +4,6 @@ uv venv
 
 source .venv/bin/activate
 
-uv install
+uv sync
 
 uv pip install --editable .
