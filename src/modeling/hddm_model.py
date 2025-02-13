@@ -1,4 +1,5 @@
 import hddm
+
 # TODO: Make paths come from config file (but also, caring for the installation of package...)
 # HDDM runs in a container. 
 def load_data(subj_ID, data_path = "/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/data/behavioral_data.csv"):
@@ -69,6 +70,18 @@ if __name__ == "__main__":
         v_reg = {"model": "v ~ 1 + gain + loss", "link_func": lambda x: x}
         reg_descr = [v_reg]
 
+        m_reg = hddm.HDDMnnRegressor(data, 
+                                reg_descr, 
+                                model='ddm',
+                                informative = False,
+                                is_group_model = False, 
+                                include=["v", "a", "t", "z"])
+    
+    if args.model == "5":
+        # Model 5: 5 parameters:
+        # drift_gain, drift_loss, boundary, response_bias, non_decision time
+        v_reg = {"model": "v ~ 0 + gain + loss", "link_func": lambda x: x}
+        reg_descr = [v_reg]
         m_reg = hddm.HDDMnnRegressor(data, 
                                 reg_descr, 
                                 model='ddm',

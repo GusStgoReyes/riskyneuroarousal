@@ -34,3 +34,27 @@ def load_pt_results():
     data = pd.read_csv(data_path)
 
     return data
+
+def load_ddm_results():
+    """
+        Load the DDM parameters modeled
+    """
+    config, username = load_config()
+    data_path = os.path.join(config.data_path[f"{username}"], "ddm_parameters.csv")
+
+    # Load the data
+    data = pd.read_csv(data_path)
+
+    return data
+
+def load_pupil_results():
+    """
+        Load the pupil results
+    """
+    config, username = load_config()
+    data_path = os.path.join(config.data_path[f"{username}"], "pupil_coefs.csv")
+
+    # Load the data
+    data = pd.read_csv(data_path)
+
+    return data
