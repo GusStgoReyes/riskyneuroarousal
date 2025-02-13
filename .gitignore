@@ -8,3 +8,4 @@ data/*.csv
 src/modeling/sbatch/slurm*
 results/ddm_models/parameters
 results/ddm_models/trained_models
+__pycache__
