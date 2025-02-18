@@ -15,3 +15,13 @@ dependencies = [
     "seaborn>=0.13.2",
     "statsmodels>=0.14.4",
 ]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"  
+
+[tool.ruff]
+extend-include = ["*.ipynb"]
+
+[tool.ruff.lint]
+extend-select = ["E501", "W", "N", "R", "I"]

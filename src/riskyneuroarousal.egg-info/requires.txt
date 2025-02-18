@@ -1,9 +1,0 @@
-jupyter>=1.1.1
-matplotlib>=3.10.0
-numpy>=2.2.0
-pandas>=2.2.3
-pyddm>=0.8.1
-pytest>=8.3.4
-rpy2>=3.5.17
-seaborn>=0.13.2
-statsmodels>=0.14.4

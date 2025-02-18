@@ -13,10 +13,11 @@ In this project, we aim to explore why the degree of loss aversion varies across
 If you wish to learn more, navigate through `notebooks/reproducible`! The jupyter notebooks take you through the data and the analysis. 
 
 ## Installation
-To install the necessary dependencies, run:
+If you don't already have uv installed, use `pip install uv` then you can clone the repository and generate the `.venv` using:
 ```bash
 sh setup_env.sh
 ```
+If running the notebooks in VSCode, just select the `.venv` from the root dirctory as the kernel.
 
 Furthermore, add the path of the data folder to `config.json` and add your username. 
 

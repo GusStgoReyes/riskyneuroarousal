@@ -64,13 +64,24 @@ def load_pupil_data():
     Load binned pupil data aligned to start time!
     """
     config, username = load_config()
-    data_path = os.path.join(config.data_path[f"{username}"], "pupil_data.csv")
+    data_path = os.path.join(config.data_path[f"{username}"], "pupil_data_all.csv")
 
     # Load the data
     data = pd.read_csv(data_path)
 
     return data
 
+def load_baseline_data():
+    """
+    Load baseline pupil data
+    """
+    config, username = load_config()
+    data_path = os.path.join(config.data_path[f"{username}"], "baseline_data.csv")
+
+    # Load the data
+    data = pd.read_csv(data_path)
+
+    return data
 ## SCRAP!!!
 # # Load all the pupil data
 # dir = "/Users/gustxsr/Documents/Stanford/PoldrackLab/PAPERS/paper1_loss_aversion_pupil/eye_data/NARPS_MG_asc_processed"
