@@ -13,7 +13,9 @@ for file in os.listdir(dir):
 pupil_data = pd.concat(pupil_data)
 
 # Remove trials with nan values (these are trials that were too short)
-pupil_data["sub_trial"] = pupil_data["sub"].astype(str) + "_" + pupil_data["trial"].astype(str)
+pupil_data["sub_trial"] = (
+    pupil_data["sub"].astype(str) + "_" + pupil_data["trial"].astype(str)
+)
 nan_sub_trial = pupil_data[pupil_data["ps_preprocessed"].isna()]["sub_trial"].unique()
 pupil_data = pupil_data[~pupil_data["sub_trial"].isin(nan_sub_trial)]
 pupil_data["outofbounds"] = pupil_data["outofbounds"].fillna(False)
@@ -35,32 +37,35 @@ save_pth = "/Users/gustxsr/Documents/Stanford/PoldrackLab/PAPERS/paper1_loss_ave
 # EqualIndifference
 equalIndifference_subjs = data.query("condition == 'equalIndifference'")["sub"].unique()
 fig, axs = plt.subplots(6, 5, figsize=(30, 25))
-subj_axs = axs.flatten()[:len(equalIndifference_subjs)]
+subj_axs = axs.flatten()[: len(equalIndifference_subjs)]
 
 for ax, subj_ID in zip(subj_axs, equalIndifference_subjs):
-  print(subj_ID)
-  subj_df = data.query(f"sub == {subj_ID}")
-  sns.lineplot(subj_df, x = "timebin", y = "ps_preprocessed", hue = "accept", ax = ax, legend = subj_ID)
+    print(subj_ID)
+    subj_df = data.query(f"sub == {subj_ID}")
+    sns.lineplot(
+        subj_df, x="timebin", y="ps_preprocessed", hue="accept", ax=ax, legend=subj_ID
+    )
 
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
 # Save
-plt.savefig(os.path.join(save_pth, "equalIndifference_pupil_figures_start.png"), dpi=300)
+plt.savefig(
+    os.path.join(save_pth, "equalIndifference_pupil_figures_start.png"), dpi=300
+)
 plt.close()
 
 # EqualRange
 equalRange_subjs = data.query("condition == 'equalRange'")["sub"].unique()
 fig, axs = plt.subplots(6, 5, figsize=(30, 25))
-subj_axs = axs.flatten()[:len(equalRange_subjs)]
+subj_axs = axs.flatten()[: len(equalRange_subjs)]
 
 for ax, subj_ID in zip(subj_axs, equalRange_subjs):
-  print(subj_ID)
-  subj_df = data.query(f"sub == {subj_ID}")
-  sns.lineplot(subj_df, x = "timebin", y = "ps_preprocessed", hue = "accept", ax = ax, legend = subj_ID)
+    print(subj_ID)
+    subj_df = data.query(f"sub == {subj_ID}")
+    sns.lineplot(
+        subj_df, x="timebin", y="ps_preprocessed", hue="accept", ax=ax, legend=subj_ID
+    )
 
-plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0.)
+plt.legend(bbox_to_anchor=(1.05, 1), loc="upper left", borderaxespad=0.0)
 # Save
 plt.savefig(os.path.join(save_pth, "equalRange_pupil_figures_start.png"), dpi=300)
 plt.close()
-
-
-
