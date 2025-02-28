@@ -5,7 +5,7 @@ import hddm
 # HDDM runs in a container.
 def load_data(
     subj_ID,
-    data_path="/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/data/behavioral_data.csv",
+    data_path="/scratch/users/gustxsr/PoldrackLab/riskyneuroarousal/data/behavioral_data_pupil.csv",
 ):
     data = hddm.load_csv(data_path).query(f"sub == {subj_ID}")
 
@@ -103,6 +103,21 @@ if __name__ == "__main__":
         # drift_gain, drift_loss, boundary, response_bias, non_decision time
         v_reg = {"model": "v ~ 0 + gain + loss", "link_func": lambda x: x}
         reg_descr = [v_reg]
+        m_reg = hddm.HDDMnnRegressor(
+            data,
+            reg_descr,
+            model="ddm",
+            informative=False,
+            is_group_model=False,
+            include=["v", "a", "t", "z"],
+        )
+    
+    if args.model == "6":
+        # Model 6: 8 parameters:
+        v_reg = {"model": "v ~ 1 + gain + loss", "link_func": lambda x: x}
+        z_reg = {"model": "z ~ 1 + baseline", "link_func": lambda x: x}
+        a_reg = {"model": "a ~ 1 + baseline", "link_func": lambda x: x}
+        reg_descr = [v_reg, z_reg, a_reg]
         m_reg = hddm.HDDMnnRegressor(
             data,
             reg_descr,

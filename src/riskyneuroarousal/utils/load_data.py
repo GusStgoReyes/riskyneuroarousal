@@ -70,7 +70,7 @@ def load_pupil_data():
     Load binned pupil data aligned to start time!
     """
     config, username = load_config()
-    data_path = os.path.join(config.data_path[f"{username}"], "pupil_data_all.csv")
+    data_path = os.path.join(config.data_path[f"{username}"], "pupil_data_zscore.csv")
 
     # Load the data
     data = pd.read_csv(data_path)

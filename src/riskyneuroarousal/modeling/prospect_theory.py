@@ -3,8 +3,8 @@
 import numpy as np
 from scipy.optimize import minimize
 import pandas as pd
-from utils.load_data import load_behavioral_data
-from config import Config
+from riskyneuroarousal.utils.load_data import load_behavioral_data
+from riskyneuroarousal.config import Config
 import os
 
 
@@ -82,7 +82,7 @@ def fit_pt_model(df, pars0=None, bounds=None, method="L-BFGS-B"):
         method=method,
         tol=1e-8,
         bounds=bounds,
-        options={"maxiter": 2000},
+        options={"maxiter": 3000},
     )
     if output.success:
         return output.x, output.fun
@@ -153,13 +153,13 @@ if __name__ == "__main__":
     # Model 6: Only curvature
     # Model 7: Linear utility (no loss aversion or curvature)
     models_bounds = [
-        ((0, None), (0, None), (0, None)),
+        # ((0, None), (0.001, None), (0, None)),
         ((0, None), (0, None), (1, 1)),
-        ((0, None), (1, 1), (0, None)),
-        ((1, 1), (0, None), (0, None)),
-        ((0, None), (1, 1), (1, 1)),
-        ((1, 1), (0, None), (1, 1)),
-        ((1, 1), (1, 1), (0, None)),
+        # ((0, None), (1, 1), (0, None)),
+        # ((1, 1), (0.001, None), (0, None)),
+        # ((0, None), (1, 1), (1, 1)),
+        # ((1, 1), (0.001, None), (1, 1)),
+        # ((1, 1), (1, 1), (0, None)),
     ]
 
     for i, bounds in enumerate(models_bounds):

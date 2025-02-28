@@ -1,6 +1,6 @@
 import pyddm
 import pandas as pd
-from utils.load_data import load_behavioral_data, load_ddm_results
+from riskyneuroarousal.utils.load_data import load_behavioral_data, load_ddm_results
 
 
 def get_ddm_model(
