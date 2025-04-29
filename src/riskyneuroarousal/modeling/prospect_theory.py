@@ -63,7 +63,6 @@ def LL_prospect(par):
         raise RuntimeError("LL is nan")
     return LL
 
-
 # Fit the model
 def fit_pt_model(df, pars0=None, bounds=None, method="L-BFGS-B"):
     if bounds is None:
@@ -89,7 +88,7 @@ def fit_pt_model(df, pars0=None, bounds=None, method="L-BFGS-B"):
     else:
         print(f"Subject {df['sub'].unique()[0]} failed!")
         raise RuntimeError(output.message)
-
+    
 
 # Create pandas with all outputs
 def get_predicted_output(sub_pars, subdata):

@@ -13,6 +13,7 @@ dependencies = [
     "pytest>=8.3.4",
     "rpy2>=3.5.17",
     "ruff>=0.9.6",
+    "scikit-learn>=1.6.1",
     "seaborn>=0.13.2",
     "statsmodels>=0.14.4",
 ]
