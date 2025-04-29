@@ -323,8 +323,9 @@ def fit_model(df, negFunc, pars0=None, bounds=None, method="L-BFGS-B"):
                         "tol":1e-8}
     
     output = basinhopping(
-        negFunc,
-        pars0,
+        func = negFunc,
+        x0 = pars0,
+        niter = 50,
         minimizer_kwargs = minimizer_kwargs,
     )
     if output.success:

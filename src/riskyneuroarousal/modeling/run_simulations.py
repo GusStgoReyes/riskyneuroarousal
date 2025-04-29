@@ -75,7 +75,7 @@ if __name__ == "__main__":
     condition = ["equalIndifference", "equalRange"][int(sys.argv[4])]
     save_pth = sys.argv[5]
 
-    print(f"Running {model_name} with condition {condition} on thread {thread_indx} of {total_threads}", flush=True)
+    print(f"Running {model_name} with condition {condition} on thread {thread_indx+1} of {total_threads}", flush=True)
 
     # Get the trials
     if condition == "equalIndifference":
@@ -135,8 +135,10 @@ if __name__ == "__main__":
             recovered_params["estimates"].extend([loss])
             recovered_params["real"].extend(curr_params[curr_params_names].values)
             recovered_params["real"].extend([np.nan])
-            recovered_params["indx"].extend([curr_params['indx']] * len(recovered_params["param_names"]))
+            recovered_params["indx"].extend([curr_params['indx']] * (len(curr_params_names)+1))
             print(f"Row {curr_params['indx']} fitted successfully!")
+        else:
+            print(f"Row {curr_params['indx']} not successful!!! :(")
         
     # Save the results
     recovered_params = pd.DataFrame(recovered_params)
