@@ -3,21 +3,25 @@ import os
 from riskyneuroarousal.config import Config
 
 
-def load_config():
+def load_config(config_pth = None):
     """
     Load the configuration file.
     """
     # Get path to the data from the config file
-    config = Config()
+    if config_pth is not None:
+        config = Config(config_pth)
+    else:
+        # Load the config file
+        config = Config()
     username = config.username
     return config, username
 
 
-def load_behavioral_data(min_RT=0.2):
+def load_behavioral_data(min_RT=0.2, config_pth = None):
     """
     Load behavioral data from the specified file path.
     """
-    config, username = load_config()
+    config, username = load_config(config_pth)
     data_path = os.path.join(config.data_path[f"{username}"], "behavioral_data.csv")
 
     # Load the data and remove trials with RT < 0.2 (includes no response trials)

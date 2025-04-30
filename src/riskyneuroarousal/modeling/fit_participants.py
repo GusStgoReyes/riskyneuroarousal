@@ -1,12 +1,11 @@
-from riskyneuroarousal.modeling.behavioral_models import (get_trials, 
-                                                    simulate_behavior, 
+from riskyneuroarousal.modeling.behavioral_models import (
                                                     negLL_EV_binary, 
                                                     negLL_EV_ordinal, 
                                                     negLL_CPT_binary,
                                                     negLL_CPT_ordinal,
                                                     fit_model)
+from riskyneuroarousal.utils.load_data import load_behavioral_data
 import numpy as np
-import itertools
 import pandas as pd
 import sys
 import os
@@ -123,47 +122,25 @@ if __name__ == "__main__":
     thread_indx = int(sys.argv[2])
     total_threads = int(sys.argv[3])
 
-    condition = ["equalIndifference", "equalRange"][int(sys.argv[4])]
-    save_pth = sys.argv[5]
+    save_pth = sys.argv[4]
+    config_pth = sys.argv[5]
 
-    print(f"Running {model_name} with condition {condition} on thread {thread_indx+1} of {total_threads}", flush=True)
+    print(f"Running {model_name}  on thread {thread_indx+1} of {total_threads}", flush=True)
 
-    # Get the trials
-    if condition == "equalIndifference":
-        gains = np.arange(10, 41, 2)
-        losses = np.arange(5, 21, 1)
-    elif condition == "equalRange":
-        gains = np.arange(5, 21, 1)
-        losses = np.arange(5, 21, 1)
-    trials = get_trials(gains, losses, repetitions = 1)
-
-    # Define the parameter ranges for the simulations
-    param_ranges = model_param_ranges[model_name]
-
-    # Create a grid of parameter combinations
-    param_combinations = list(itertools.product(*param_ranges.values()))
-    param_combinations = pd.DataFrame(param_combinations, columns=param_ranges.keys())
-    param_combinations["indx"] = param_combinations.index
+    # Load the data
+    df = load_behavioral_data(min_RT=0.2, config_pth = config_pth).reset_index(drop=True)
+    subs = df["sub"].unique()
 
     # To save parameters
     recovered_params = {"param_names" : [], 
                     "estimates" : [], 
-                    "real" : [],
-                    "indx" : []}
+                    "sub" : [], 
+                    "condition" : []}
     
-    print("Total simulations = ", len(param_combinations), flush=True)
-    for i in range(thread_indx, len(param_combinations), total_threads):
-        curr_params = param_combinations.iloc[i]
-
-        curr_params_names = model_params_info[model_name]["param_names"]
-        # Simulate behavior
-        trials_behavior = simulate_behavior(trials, curr_params, model = model_name).reset_index(drop=True)
-        if np.mean(trials_behavior["accept"]) > 0.9 or np.mean(trials_behavior["accept"]) < 0.1:
-            print(f"Row {curr_params['indx']} not plausible! :(")
-            continue
-        trials_behavior['history'] = trials_behavior['accept'].shift(1).fillna(0).astype(int)
-        trials_behavior = trials_behavior.reset_index(drop=True)
-
+    print(f"Number of subjects: {len(subs)}", flush=True)
+    for i in range(thread_indx, len(subs), total_threads):
+        trials_behavior = df.query(f"sub == {subs[i]}").reset_index(drop=True)
+        trials_behavior["history"] = trials_behavior["accept"].shift(1).fillna(0).astype(int)
         # Fit model
         pars, loss = fit_model(trials_behavior, 
                             model_params_info[model_name]["negLL"], 
@@ -171,27 +148,25 @@ if __name__ == "__main__":
                             bounds = model_params_info[model_name]["bounds"], 
         )
         if pars is not None:
+            curr_params_names = model_params_info[model_name]["param_names"]
             recovered_params["param_names"].extend(curr_params_names)
             recovered_params["param_names"].extend(["loss"])
             recovered_params["estimates"].extend(pars)
             recovered_params["estimates"].extend([loss])
-            recovered_params["real"].extend(curr_params[curr_params_names].values)
-            recovered_params["real"].extend([np.nan])
-            recovered_params["indx"].extend([curr_params['indx']] * (len(curr_params_names)+1))
-            print(f"Row {curr_params['indx']} fitted successfully!")
+            recovered_params["sub"].extend([subs[i]] * (len(curr_params_names)+1))
+            condition = trials_behavior["condition"].unique()[0]
+            recovered_params["condition"].extend([condition] * (len(curr_params_names)+1))
+            print(f"Subject {subs[i]} fitted successfully!")
         else:
-            print(f"Row {curr_params['indx']} not successful!!! :(")
+            print(f"Subject {subs[i]} failed :(!!")
         
     # Save the results
     recovered_params = pd.DataFrame(recovered_params)
     recovered_params["model"] = model_name
-    recovered_params["condition"] = condition
 
-    file_name = f"{model_name}_{condition}_simulations_{thread_indx}.csv"
+    file_name = f"{model_name}_{condition}_subjectFit_{thread_indx}.csv"
     file_path = os.path.join(save_pth, file_name)
     if os.path.exists(file_path):
         recovered_params.to_csv(file_path, mode='a', header=False, index=False)
     else:
         recovered_params.to_csv(file_path, index=False)
-
-
