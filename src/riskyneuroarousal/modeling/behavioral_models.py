@@ -327,6 +327,7 @@ def fit_model(df, negFunc, pars0=None, bounds=None, method="L-BFGS-B"):
         x0 = pars0,
         niter = 50,
         minimizer_kwargs = minimizer_kwargs,
+        disp = True,
     )
     if output.success:
         return output.x, output.fun

@@ -62,6 +62,57 @@ model_params_info = {
     },
 }
 
+# Define the parameter ranges for the simulations
+model_param_ranges = {
+    "EV_binary" : {"c" : np.linspace(-2.5, 2.5, 10),
+                   "sigma" : np.linspace(0.5, 10.5, 10),
+                   "delta" : [0]},
+
+    "EV_ordinal" : {"a_1" : [3],
+                    "a_2" : [-3],
+                    "c" : np.linspace(-2.5, 2.5, 10),
+                    "sigma" : np.linspace(0.5, 10.5, 10),
+                    "delta" : [0],},
+
+    "EV_binary_history" : {"c" : np.linspace(-2.5, 2.5, 10),
+                            "sigma" : np.linspace(0.5, 10.5, 10),
+                            "delta" : [-1.5, 1.5],},
+
+    "EV_ordinal_history" : {"a_1" : [3],
+                            "a_2" : [-3],
+                            "c" : np.linspace(-2.5, 2.5, 10),
+                            "sigma" : np.linspace(0.5, 10.5, 10),
+                            "delta" : [-1.5, 1.5],},
+
+    "CPT_binary" : {"alpha" : np.linspace(0.6, 1.1, 5),
+                    "lambd" : np.linspace(0.8, 3.5, 5),
+                    "c" : np.linspace(-2.5, 2.5, 5),
+                    "sigma" : np.linspace(0.5, 10.5, 5),
+                    "delta" : [0],},
+
+    "CPT_ordinal" : {"alpha" : np.linspace(0.6, 1.1, 5),
+                    "lambd" : np.linspace(0.8, 3.5, 5),
+                    "a_1" : [3],
+                    "a_2" : [-3],
+                    "c" : np.linspace(-2.5, 2.5, 5),
+                    "sigma" : np.linspace(0.5, 10.5, 5),
+                    "delta" : [0],},
+
+    "CPT_binary_history" : {"alpha" : np.linspace(0.6, 1.1, 5),
+                            "lambd" : np.linspace(0.8, 3.5, 5),
+                            "c" : np.linspace(-2.5, 2.5, 5),
+                            "sigma" : np.linspace(0.5, 10.5, 5),
+                            "delta" : [-1.5, 1.5],},
+
+    "CPT_ordinal_history" : {"alpha" : np.linspace(0.6, 1.1, 5),
+                            "lambd" : np.linspace(0.8, 3.5, 5),
+                            "a_1" : [3],
+                            "a_2" : [-3],
+                            "c" : np.linspace(-2.5, 2.5, 5),
+                            "sigma" : np.linspace(0.5, 10.5, 5),
+                            "delta" : [-1.5, 1.5],},
+}
+
 if __name__ == "__main__":
     # Get the inputs to the program
     model_name = ["EV_binary", "EV_ordinal",
@@ -87,24 +138,12 @@ if __name__ == "__main__":
     trials = get_trials(gains, losses, repetitions = 1)
 
     # Define the parameter ranges for the simulations
-    param_ranges = {"lambd" : np.linspace(0.5, 3.5, 5),
-                    "alpha" : np.linspace(0.4, 1.5, 5),
-                    "c" : [1, 2],
-                    "sigma" : np.linspace(0.5, 4.5, 5),
-                    "a_1" : [3, 6],
-                    "a_2" : [-3, -6],
-                    "delta" : [-2, 2],}
+    param_ranges = model_param_ranges[model_name]
 
     # Create a grid of parameter combinations
     param_combinations = list(itertools.product(*param_ranges.values()))
     param_combinations = pd.DataFrame(param_combinations, columns=param_ranges.keys())
     param_combinations["indx"] = param_combinations.index
-    if len(model_name.split("_")) == 2:
-        param_combinations["delta"] = 0
-
-    # Select unique parameters for model
-    model_params = model_params_info[model_name]["param_names"]
-    param_combinations = param_combinations[model_params + ['indx']].drop_duplicates(subset=model_params, keep='last')
 
     # To save parameters
     recovered_params = {"param_names" : [], 
@@ -118,7 +157,10 @@ if __name__ == "__main__":
 
         curr_params_names = model_params_info[model_name]["param_names"]
         # Simulate behavior
-        trials_behavior = simulate_behavior(trials, curr_params, model = model_name)
+        trials_behavior = simulate_behavior(trials, curr_params, model = model_name).reset_index(drop=True)
+        if np.mean(trials_behavior["accept"]) > 0.9 or np.mean(trials_behavior["accept"]) < 0.1:
+            print(f"Row {curr_params['indx']} not plausible! :(")
+            continue
         trials_behavior['history'] = trials_behavior['accept'].shift(1).fillna(0).astype(int)
         trials_behavior = trials_behavior.reset_index(drop=True)
 
