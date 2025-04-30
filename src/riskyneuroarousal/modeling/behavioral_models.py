@@ -321,7 +321,7 @@ def fit_model(df, negFunc, pars0=None, bounds=None, method="L-BFGS-B"):
                         "args": (df,), 
                         "bounds": bounds,
                         "tol":1e-8}
-    
+    print("Going into basinhop", flush = True) 
     output = basinhopping(
         func = negFunc,
         x0 = pars0,
