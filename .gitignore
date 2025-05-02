@@ -5,6 +5,7 @@ data/NARPS_MG_asc_processed
 data/NARPS_MG_asc_quality_control
 !data/behavioral_data.csv
 !data/behavioral_data_non_pupil.csv
+!data/behavioral_data_SVs.csv
 !data/pupil_data_share.csv
 !data/behavioral_data_pupil.csv
 .DS_Store

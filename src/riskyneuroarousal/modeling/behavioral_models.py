@@ -253,47 +253,35 @@ def negLL_EV_ordinal(pars0, *args):
 
     return nll
 
-def convert_subjective(df, pars, model="ordinal"):
+def convert_subjective(df, pars, model="EV_binary"):
     """
     Convert the subjective values to probabilities.
     """
-    if model == "EV_binary":
+    model_description = model.split("_")
+    if len(model_description) == 3:
+        history = True
+    else:
+        history = False
+
+    if model_description[0] == "EV":
         # Compute decision value based on parameters
         df["decision_value"] = (df["gain"] - df["loss"]) / 2 
         df["decision_value"] -= pars["c"].values[0]
-        df["prob_1"] = 1 - stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
-        df["prob_0"] = stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
-        df["EV"] = (df["prob_1"] * 1 + df["prob_0"] * 0)
-        df["accept_pred"] = df["prob_1"] > 0.5
-        return df
 
-    # Compute decision value based on parameters
-    df["subjective_gain"] = df.apply(lambda x: value_function(x["gain"], alpha = pars["alpha"].values[0], lambd = pars["lambd"].values[0]), axis = 1)
-    df["subjective_loss"] = df.apply(lambda x: value_function(-x["loss"], alpha = pars["alpha"].values[0], lambd = pars["lambd"].values[0]), axis = 1)
-    df["subj_value"] = df["subjective_gain"] + df["subjective_loss"]
-    df["decision_value"] = df.apply(lambda x: inv_value_function(x["subj_value"], alpha = pars["alpha"].values[0], lambd = pars["lambd"].values[0]), axis = 1)
-    df["decision_value"] -= pars["c"].values[0]
-
-    if model == "CPT_ordinal":
-        # Compute probabilities of the responses
-        df["prob_4"] = 1 - stats.norm.cdf(pars["a_1"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
-        df["prob_3"] = (stats.norm.cdf(pars["a_1"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]) -
-                      stats.norm.cdf(0 - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]))
-        df["prob_2"] = (stats.norm.cdf(0 - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]) -
-                      stats.norm.cdf(pars["a_2"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]))
-        df["prob_1"] = stats.norm.cdf(pars["a_2"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
-
-        df["EV"] = (df["prob_4"] * 4 + df["prob_3"] * 3 + df["prob_2"] * 2 + df["prob_1"] * 1)
-        df["accept_pred"] = df["prob_4"] + df["prob_3"] > 0.5
-    elif model == "CPT_binary":
-        # Compute probabilities of the responses
-        df["prob_1"] = 1 - stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
-        df["prob_0"] = stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
-        df["EV"] = (df["prob_1"] * 1 + df["prob_0"] * 0)
-        df["accept_pred"] = df["prob_1"] > 0.5
-    elif model == "CPT_ordinal_history":
+    elif model_description[0] == "CPT":
+        # Compute decision value based on parameters
+        df["subjective_gain"] = df.apply(lambda x: value_function(x["gain"], alpha = pars["alpha"].values[0], lambd = pars["lambd"].values[0]), axis = 1)
+        df["subjective_loss"] = df.apply(lambda x: value_function(-x["loss"], alpha = pars["alpha"].values[0], lambd = pars["lambd"].values[0]), axis = 1)
+        df["subj_value"] = df["subjective_gain"] + df["subjective_loss"]
+        df["decision_value"] = df.apply(lambda x: inv_value_function(x["subj_value"], alpha = pars["alpha"].values[0], lambd = pars["lambd"].values[0]), axis = 1)
+        df["decision_value"] -= pars["c"].values[0]
+    
+    if history:
+        # Add history bias
         df["decision_value"] += pars["delta"].values[0] * df["history"]
-        # Compute probabilities of the responses
+    
+    # Compute probabilities of the responses
+    if model_description[1] == "ordinal":
         df["prob_4"] = 1 - stats.norm.cdf(pars["a_1"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
         df["prob_3"] = (stats.norm.cdf(pars["a_1"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]) -
                       stats.norm.cdf(0 - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]))
@@ -301,8 +289,14 @@ def convert_subjective(df, pars, model="ordinal"):
                       stats.norm.cdf(pars["a_2"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0]))
         df["prob_1"] = stats.norm.cdf(pars["a_2"].values[0] - df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
 
-        df["EV"] = (df["prob_4"] * 4 + df["prob_3"] * 3 + df["prob_2"] * 2 + df["prob_1"] * 1)
+        df["EV_R"] = ((df["prob_4"] * 4 + df["prob_3"] * 3 + df["prob_2"] * 2 + df["prob_1"] * 1) - 1) / 3
         df["accept_pred"] = df["prob_4"] + df["prob_3"] > 0.5
+        df["response_pred"] = np.argmax(df[["prob_1", "prob_2", "prob_3", "prob_4"]], axis = 1) + 1
+    elif model_description[1] == "binary":
+        df["prob_1"] = 1 - stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
+        df["prob_0"] = stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
+        df["EV_R"] = (df["prob_1"] * 1 + df["prob_0"] * 0) 
+        df["accept_pred"] = df["prob_1"] > 0.5
     
     return df
 
