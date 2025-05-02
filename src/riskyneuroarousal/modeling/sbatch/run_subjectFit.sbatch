@@ -2,7 +2,7 @@
 #SBATCH --job-name=fitting
 #SBATCH --time=00:45:00
 #SBATCH -p normal,russpold
-#SBATCH --array=0-54
+#SBATCH --array=0-19
 
 source /scratch/users/gustxsr/riskyneuroarousal/.venv/bin/activate
 
@@ -10,4 +10,4 @@ source /scratch/users/gustxsr/riskyneuroarousal/.venv/bin/activate
 export OMP_NUM_THREADS=1
 export MKL_NUM_THREADS=1
 
-python /scratch/users/gustxsr/riskyneuroarousal/src/riskyneuroarousal/modeling/fit_participants.py 6 $SLURM_ARRAY_TASK_ID 55 /scratch/users/gustxsr/results_fit /scratch/users/gustxsr/riskyneuroarousal/config.json
+python /scratch/users/gustxsr/riskyneuroarousal/src/riskyneuroarousal/modeling/fit_participants.py 5 $SLURM_ARRAY_TASK_ID 20 /scratch/users/gustxsr/results_fit /scratch/users/gustxsr/riskyneuroarousal/config.json
