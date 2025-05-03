@@ -1,6 +1,7 @@
 import pyddm
 import pandas as pd
 from riskyneuroarousal.utils.load_data import load_behavioral_data, load_ddm_results
+import numpy as np
 
 
 def get_ddm_model(
@@ -9,6 +10,22 @@ def get_ddm_model(
     model = pyddm.gddm(
         starting_position=x0,
         drift=lambda gain, loss: alpha + drift_gain * gain + drift_loss * loss,
+        nondecision=nondecision,
+        bound=lambda t: bound - theta * t,
+        conditions=["gain", "loss"],
+        T_dur=4,
+        dx=0.01,
+        dt=0.01,
+    )
+
+    return model
+
+def get_ddm_model_2(
+    x0=0.5, drift = 1, nondecision=0.3, bound=1, theta=0.6, alpha=0.9, lambd=1.5, c = 1
+):
+    model = pyddm.gddm(
+        starting_position=x0,
+        drift=lambda gain, loss: drift * (c + np.power(gain, alpha) - lambd * np.power(loss, alpha)),
         nondecision=nondecision,
         bound=lambda t: bound - theta * t,
         conditions=["gain", "loss"],
