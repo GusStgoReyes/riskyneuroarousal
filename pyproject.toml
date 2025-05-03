@@ -3,13 +3,13 @@ name = "riskyneuroarousal"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = "==3.10.0"
 dependencies = [
     "jupyter>=1.1.1",
     "matplotlib>=3.10.0",
     "numpy>=2.2.0",
     "pandas>=2.2.3",
-    #"pyddm>=0.8.1",
+    "pyddm>=0.8.1",
     "pytest>=8.3.4",
     #"rpy2>=3.5.17",
     "ruff>=0.9.6",
