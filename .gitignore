@@ -12,7 +12,7 @@ data/NARPS_MG_asc_quality_control
 src/modeling/sbatch/slurm*
 results/ddm_models/parameters
 results/ddm_models/trained_models
-
+*/slurm*
 __pycache__
 
 *.py[oc]
