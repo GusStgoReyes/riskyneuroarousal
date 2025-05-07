@@ -265,8 +265,8 @@ def convert_subjective(df, pars, model="EV_binary"):
 
     if model_description[0] == "EV":
         # Compute decision value based on parameters
-        df["decision_value"] = (df["gain"] - df["loss"]) / 2 
-        df["decision_value"] -= pars["c"].values[0]
+        df["subj_value"] = (df["gain"] - df["loss"]) / 2 
+        df["decision_value"] = df["subj_value"] - pars["c"].values[0]
 
     elif model_description[0] == "CPT":
         # Compute decision value based on parameters
@@ -297,6 +297,29 @@ def convert_subjective(df, pars, model="EV_binary"):
         df["prob_0"] = stats.norm.cdf(- df["decision_value"], loc = 0, scale = pars["sigma"].values[0])
         df["EV_R"] = (df["prob_1"] * 1 + df["prob_0"] * 0) 
         df["accept_pred"] = df["prob_1"] > 0.5
+    
+    return df
+
+def convert_subjective_SQ(df, pars, column = "DV_history", model="EV_binary"):
+    """
+    Convert the subjective values to probabilities.
+    """
+    model_description = model.split("_")
+    
+    # Compute probabilities of the responses
+    if model_description[1] == "ordinal":
+        prob_4 = 1 - stats.norm.cdf(pars["a_1"].values[0] - df[column], loc = 0, scale = pars["sigma"].values[0])
+        prob_3 = (stats.norm.cdf(pars["a_1"].values[0] - df[column], loc = 0, scale = pars["sigma"].values[0]) -
+                      stats.norm.cdf(0 - df[column], loc = 0, scale = pars["sigma"].values[0]))
+        prob_2 = (stats.norm.cdf(0 - df[column], loc = 0, scale = pars["sigma"].values[0]) -
+                      stats.norm.cdf(pars["a_2"].values[0] - df[column], loc = 0, scale = pars["sigma"].values[0]))
+        prob_1 = stats.norm.cdf(pars["a_2"].values[0] - df[column], loc = 0, scale = pars["sigma"].values[0])
+
+        df[f"EV_R_{column}"] = ((prob_4 * 4 + prob_3 * 3 + prob_2 * 2 + prob_1 * 1) - 1) / 3
+    elif model_description[1] == "binary":
+        prob_1 = 1 - stats.norm.cdf(- df[column], loc = 0, scale = pars["sigma"].values[0])
+        prob_0 = stats.norm.cdf(- df[column], loc = 0, scale = pars["sigma"].values[0])
+        df[f"EV_R_{column}"] = (prob_1 * 1 + prob_0 * 0) 
     
     return df
 
