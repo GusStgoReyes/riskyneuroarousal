@@ -37,7 +37,7 @@ if __name__ == "__main__":
                    "SV_EV_ordinal_history",
                    "SV_EV_binary_history"][int(args.model)]
     
-    v_reg = {"model": f"v ~ 1 + {SV_name}", "link_func": lambda x: x}
+    v_reg = {"model": f"v ~ 0 + {SV_name}", "link_func": lambda x: x}
     reg_descr = [v_reg]
     m_reg = hddm.HDDMnnRegressor(
             data,

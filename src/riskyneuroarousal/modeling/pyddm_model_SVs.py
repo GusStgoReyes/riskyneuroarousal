@@ -26,6 +26,13 @@ def get_model_samples(sub, ddm_model, samples_per_condition=200):
 
     return df_model
 
+def drift_func(drift, c, alpha, lambd, gain, loss):
+    dv = np.power(gain, alpha) - lambd * np.power(loss, alpha)
+    if dv > 0:
+        dv = np.power(dv, 1 / alpha)
+    else:
+        dv = -np.power(-dv/lambd, 1 / alpha)
+    return drift*dv - c
 
 def ddm(
     data,
@@ -37,7 +44,7 @@ def ddm(
     rt_column_name="RT",
     choice_column_name="accept",
 ):
-    drift_func = lambda drift, c, alpha, lambd_drift, gain, loss: c + drift*np.power(gain, alpha) - lambd_drift * np.power(loss, alpha)
+    
     model = pyddm.gddm(
         starting_position='x0',
         drift=drift_func,
@@ -59,17 +66,17 @@ def ddm(
     # Fit the model
     model.fit(
         sample=samples,
-        fitting_method="differential_evolution",
+        fitting_method="bads",
     )
 
     return model
 
 def parameters():
     return {
-        "drift" : (0, 0.4), 
-        "alpha" : (0.1, 1.4),
+        "drift" : (0, 0.5), 
+        "alpha" : (0.4, 1.4),
         "c" : (-0.3, 0.3),
-        "lambd_drift" : (0, 0.3),
+        "lambd" : (0.5, 2),
         "x0": (-1, 1),
         "nondecision": (0.1, 1.5),
         "theta": (0, 1.5),
