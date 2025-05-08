@@ -31,9 +31,12 @@ if __name__ == "__main__":
 
     # Load a subjects data (TODO: make dynamic src path)
     data = load_data(int(args.subj_ID))
-
+    name = "driftbiasnohistory"
     
-    v_reg = {"model": f"v ~ C(pupil_bin):dir_opposite_prev_response + decision_value_norm", "link_func": lambda x: x}
+    v_reg = {"model": f"v ~ 0 + C(pupil_bin) + decision_value_norm", "link_func": lambda x: x}
+    v_reg_normal = {"model": f"v ~ 1 + decision_value_norm", "link_func": lambda x: x}
+    z_reg = {"model": f"z ~ 1 + C(pupil_bin)", "link_func": lambda x: x} 
+    theta_reg = {"model": f"theta ~ 0 + C(pupil_bin)", "link_func": lambda x: x}   
     reg_descr = [v_reg]
     m_reg = hddm.HDDMnnRegressor(
             data,
@@ -47,11 +50,11 @@ if __name__ == "__main__":
     m_reg.sample(
         10000,
         burn=2000,
-        dbname=f"{args.model_pth}/sub{args.subj_ID}_model{args.model}_SV.db",
+        dbname=f"{args.model_pth}/sub{args.subj_ID}_model{args.model}_{name}_.db",
         db="pickle",
     )
     stats = m_reg.gen_stats()
     print(stats.head())
     stats.loc["BIC"] = [m_reg.bic, 0, 0, 0, 0, 0, 0, 0]
-    stats.to_csv(f"{args.results_pth}/sub{args.subj_ID}_pupil_ddm.csv")
-    m_reg.save(f"{args.model_pth}/sub{args.subj_ID}_pupil_ddm.hddm")
+    stats.to_csv(f"{args.results_pth}/sub{args.subj_ID}_pupil_{name}_.csv")
+    m_reg.save(f"{args.model_pth}/sub{args.subj_ID}_pupil_{name}_.hddm")
