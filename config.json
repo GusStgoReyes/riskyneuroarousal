@@ -3,5 +3,5 @@
     "processed_data_pth": {"gustavo_local" : "/Users/gustxsr/Documents/Stanford/PoldrackLab/github/analysisNARPS/data"},
     "data_path" : {"gustavo_local" : "/Users/gustxsr/Documents/Stanford/PoldrackLab/github/riskyneuroarousal/data",
                     "gustavo_sherlock" : "/scratch/users/gustxsr/riskyneuroarousal/data"},
-    "username" : "gustavo_local"
+    "username" : "gustavo_sherlock"
 }

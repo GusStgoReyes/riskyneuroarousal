@@ -2,8 +2,8 @@ import pandas as pd
 import os
 
 all_params_fit = []
-pth_params = "/scratch/users/gustxsr/results_ddm/parameters4/"
-pth_result = "/scratch/users/gustxsr/results_ddm/ddm_parameters4.csv"
+pth_params = "/scratch/users/gustxsr/results_ddm/parameters5/"
+pth_result = "/scratch/users/gustxsr/results_ddm/ddm_parameters5.csv"
 
 for file in os.listdir(pth_params):
     if file.endswith(".csv"):

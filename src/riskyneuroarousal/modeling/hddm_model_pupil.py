@@ -31,9 +31,9 @@ if __name__ == "__main__":
 
     # Load a subjects data (TODO: make dynamic src path)
     data = load_data(int(args.subj_ID))
-    name = "driftbiasnohistory"
+    name = "driftbiasnohistorycontinuous"
     
-    v_reg = {"model": f"v ~ 0 + C(pupil_bin) + decision_value_norm", "link_func": lambda x: x}
+    v_reg = {"model": f"v ~ 1 + pupil_size + decision_value_norm", "link_func": lambda x: x}
     v_reg_normal = {"model": f"v ~ 1 + decision_value_norm", "link_func": lambda x: x}
     z_reg = {"model": f"z ~ 1 + C(pupil_bin)", "link_func": lambda x: x} 
     theta_reg = {"model": f"theta ~ 0 + C(pupil_bin)", "link_func": lambda x: x}   
