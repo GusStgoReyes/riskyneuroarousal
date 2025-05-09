@@ -27,17 +27,24 @@ if __name__ == "__main__":
     )
     parser.add_argument("--results_pth", type=str, help="The path to save the results")
     parser.add_argument("--model_pth", type=str, help="The path to save the model")
+    parser.add_argument("--name", type=str, help="Name of model")
     args = parser.parse_args()
 
     # Load a subjects data (TODO: make dynamic src path)
     data = load_data(int(args.subj_ID))
-    name = "driftbiasnohistorycontinuous"
     
-    v_reg = {"model": f"v ~ 1 + pupil_size + decision_value_norm", "link_func": lambda x: x}
-    v_reg_normal = {"model": f"v ~ 1 + decision_value_norm", "link_func": lambda x: x}
+    v_reg = {"model": f"v ~ 1 + C(pupil_bin) + subj_value_norm", "link_func": lambda x: x}
+    v_reg_normal = {"model": f"v ~ 1 + subj_value_norm", "link_func": lambda x: x}
     z_reg = {"model": f"z ~ 1 + C(pupil_bin)", "link_func": lambda x: x} 
     theta_reg = {"model": f"theta ~ 0 + C(pupil_bin)", "link_func": lambda x: x}   
-    reg_descr = [v_reg]
+
+    if args.name == "driftbias":
+        reg_descr = [v_reg]
+    elif args.name == "startingpoint":
+        reg_descr = [v_reg_normal, z_reg]
+    elif args.name == "theta":
+        reg_descr = [v_reg_normal, theta_reg]
+
     m_reg = hddm.HDDMnnRegressor(
             data,
             reg_descr,
