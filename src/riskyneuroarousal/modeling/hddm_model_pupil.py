@@ -36,6 +36,10 @@ if __name__ == "__main__":
     v_reg = {"model": f"v ~ 1 + C(pupil_bin) + subj_value_norm", "link_func": lambda x: x}
     v_reg_normal = {"model": f"v ~ 1 + subj_value_norm", "link_func": lambda x: x}
     z_reg = {"model": f"z ~ 1 + C(pupil_bin)", "link_func": lambda x: x} 
+    # This one accounts for a general starting point and depends on the previous trials strength. 
+    # So the beta parameter will give us how much the previous trial evidence modulates the starting point
+    # of current trial. I guess we can correlate?
+    z_prev_reg = {"model": f"z ~ 1 + SV_prev", "link_func": lambda x: x}
     theta_reg = {"model": f"theta ~ 0 + C(pupil_bin)", "link_func": lambda x: x}   
 
     if args.name == "driftbias":
