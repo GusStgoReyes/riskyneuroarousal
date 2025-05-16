@@ -50,6 +50,8 @@ if __name__ == "__main__":
         reg_descr = [v_reg_normal, theta_reg]
     elif args.name == "normal":
         reg_descr = [v_reg_normal]
+    elif args.name == "startingpointBias":
+        reg_descr = [v_reg_normal, z_prev_reg]
 
     m_reg = hddm.HDDMnnRegressor(
             data,
