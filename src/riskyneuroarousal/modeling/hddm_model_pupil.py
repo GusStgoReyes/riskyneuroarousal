@@ -48,6 +48,8 @@ if __name__ == "__main__":
         reg_descr = [v_reg_normal, z_reg]
     elif args.name == "theta":
         reg_descr = [v_reg_normal, theta_reg]
+    elif args.name == "normal":
+        reg_descr = [v_reg_normal]
 
     m_reg = hddm.HDDMnnRegressor(
             data,
@@ -61,11 +63,11 @@ if __name__ == "__main__":
     m_reg.sample(
         10000,
         burn=2000,
-        dbname=f"{args.model_pth}/sub{args.subj_ID}_model{args.model}_{name}_.db",
+        dbname=f"{args.model_pth}/sub{args.subj_ID}_model{args.model}_{args.name}_.db",
         db="pickle",
     )
     stats = m_reg.gen_stats()
     print(stats.head())
     stats.loc["BIC"] = [m_reg.bic, 0, 0, 0, 0, 0, 0, 0]
-    stats.to_csv(f"{args.results_pth}/sub{args.subj_ID}_pupil_{name}_.csv")
-    m_reg.save(f"{args.model_pth}/sub{args.subj_ID}_pupil_{name}_.hddm")
+    stats.to_csv(f"{args.results_pth}/sub{args.subj_ID}_pupil_{args.name}_.csv")
+    m_reg.save(f"{args.model_pth}/sub{args.subj_ID}_pupil_{args.name}_.hddm")
